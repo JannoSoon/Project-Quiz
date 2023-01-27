@@ -3,6 +3,7 @@ package com.example.quiz.Services;
 import com.example.quiz.Dto.QuestionsDto;
 import com.example.quiz.FrontEnd.Difficulty;
 import com.example.quiz.FrontEnd.GameOptions;
+import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class OngoingGameService {
 
     private GameOptions gameOptions;
     private int currentQuestionIndex;
+    @Getter
     private int points;
 
     private List<QuestionsDto.QuestionDto>questions;
@@ -54,6 +56,8 @@ public class OngoingGameService {
    public boolean checkAnswerForCurrentQuestionAndUpdatePoints(String userAnswer) {
         QuestionsDto.QuestionDto dto = questions.get(currentQuestionIndex);
         boolean correct = dto.getCorrectAnswer().equals(userAnswer);
+        log.info("correct:" + dto.getCorrectAnswer() );
+       log.info("user:" + userAnswer );
         if(correct) {
             points++;
         }

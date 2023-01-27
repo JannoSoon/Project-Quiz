@@ -38,6 +38,26 @@ public class FrontEndController {
     @PostMapping("/select")
     public String postSelectForm(Model model, @ModelAttribute GameOptions gameOptions) {
         log.info("Form submitted with data: " + gameOptions);
+
+        boolean errors = false;
+
+        if(gameOptions.getDifficulty() == null) {
+            errors = true;
+            model.addAttribute("difficultyError", "Difficulty not chosen!");
+        }
+
+        if(gameOptions.getCategoryId() == 0) {
+            errors = true;
+            model.addAttribute("categoryError", "Category not chosen!");
+        }
+
+        if (errors) {
+            model.addAttribute("gameOptions", new GameOptions());
+            model.addAttribute("categories", quizDataService.getQuizCategories());
+
+            return "select";
+        }
+
         ongoingGameService.init(gameOptions);
         return "redirect:game";
     }
@@ -45,7 +65,7 @@ public class FrontEndController {
     @GetMapping("/game")
     public String game(Model model) {
         model.addAttribute("userAnswer", new UserAnswer());
-        model.addAttribute("currentQuestionNumber", ongoingGameService.getCurrentQuestion());
+        model.addAttribute("currentQuestionNumber", ongoingGameService.getCurrentQuestionNumber());
         model.addAttribute("totalQuestionNumber", ongoingGameService.getTotalQuestionNumber());
         model.addAttribute("currentQuestion", ongoingGameService.getCurrentQuestion());
         model.addAttribute("currentQuestionAnswers", ongoingGameService.getCurrentQuestionAnswersInRandomOrder());
@@ -68,7 +88,7 @@ public class FrontEndController {
         model.addAttribute("difficulty", ongoingGameService.difficulty());
         model.addAttribute("categoryName", ongoingGameService.getCategoryName());
         model.addAttribute("points", ongoingGameService.getTotalQuestionNumber());
-        model.addAttribute("maxPoints", ongoingGameService.getTotalQuestionNumber());
+        model.addAttribute("maxPoints", ongoingGameService.getPoints());
         return "summary";
     }
 }

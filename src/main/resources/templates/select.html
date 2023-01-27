@@ -41,6 +41,9 @@
           </div>
           <div class="form-group">
             <h4>Difficulty:</h4>
+            <div th:if="${difficultyError}">
+              <p th:class="error" th:text="${difficultyError}"></p>
+            </div>
             <th:block th:each="difficulty : ${T(com.example.quiz.FrontEnd.Difficulty).values()}">
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="difficultyRadioOptions"
@@ -54,6 +57,9 @@
             <div class="form-row">
               <div class="form-group">
                 <h4>Category:</h4>
+                <div th:if="${categoryError}">
+                  <p th:class="error" th:text="${categoryError}"></p>
+                </div>
                 <th:block th:each="category : ${categories}">
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="categoryRadioOptions"

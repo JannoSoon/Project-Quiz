@@ -31,21 +31,35 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     }
 
     public List<QuestionsDto.QuestionDto> getQuizQuestions(GameOptions gameOptions) {
-        CategoryQuestionCountInfoDto categoryQuestionCount = getCategoryQuestionCount(gameOptions.getCategoryId());
-        int availableQuestionCount = categoryQuestionCount.getQuestionCountForDifficulty(gameOptions.getDifficulty());
+        CategoryQuestionCountInfoDto categoryQuestionCount =
+                getCategoryQuestionCount(gameOptions.getCategoryId());
+        int availableQuestionCount =
+                categoryQuestionCount.getQuestionCountForDifficulty(gameOptions.getDifficulty());
         if (availableQuestionCount >= gameOptions.getNumberOfQuestions()) {
-            return getQuizQuestions(gameOptions.getNumberOfQuestions(), gameOptions.getCategoryId(), gameOptions.getDifficulty());
+            return getQuizQuestions(
+                    gameOptions.getNumberOfQuestions(),
+                    gameOptions.getCategoryId(),
+                    gameOptions.getDifficulty());
         } else {
             List<QuestionsDto.QuestionDto> questions = new ArrayList<>();
-            Map<Difficulty, Integer> eachDifficultyQuestionCount = calculateEachDifficultyQuestionCount(gameOptions.getNumberOfQuestions(), gameOptions.getDifficulty(), categoryQuestionCount);
+            Map<Difficulty, Integer> eachDifficultyQuestionCount =
+                    calculateEachDifficultyQuestionCount(
+                            gameOptions.getNumberOfQuestions(),
+                            gameOptions.getDifficulty(),
+                            categoryQuestionCount);
             for (Map.Entry<Difficulty, Integer> entry : eachDifficultyQuestionCount.entrySet()) {
-                List<QuestionsDto.QuestionDto> originalDifficultyQuestions = getQuizQuestions(entry.getValue(), gameOptions.getCategoryId(), entry.getKey());
+                List<QuestionsDto.QuestionDto> originalDifficultyQuestions =
+                        getQuizQuestions(
+                                entry.getValue(),
+                                gameOptions.getCategoryId(),
+                                entry.getKey());
                 questions.addAll(originalDifficultyQuestions);
             }
             Collections.shuffle(questions);
             return questions;
         }
     }
+
     private List<QuestionsDto.QuestionDto> getQuizQuestions(int numberOfQuestions, int categoryId, Difficulty difficulty) {
         if (numberOfQuestions <= 0) {
             return Collections.emptyList();
@@ -98,23 +112,25 @@ import static org.junit.jupiter.api.Assertions.assertNull;
                 final int numberToTransfer = Math.min(eachDifficultyQuestionCount.get(filledDifficulty) / 2, categoryQuestionCount.getQuestionCountForDifficulty(otherDifficulty));
                 eachDifficultyQuestionCount.computeIfPresent(filledDifficulty, (d, count) -> count - numberToTransfer);
                 eachDifficultyQuestionCount.put(otherDifficulty, numberToTransfer);
+
             }
         }
         return eachDifficultyQuestionCount;
 
+    }
 
-        class QuizDataServiceTest {
 
-            @Test
-            void calculateEachDifficultyQuestionCount_basicEasy() {
-                CategoryQuestionCountInfoDto categoryQuestionCount = new CategoryQuestionCountInfoDto(5, 17, 13);
-                Map<Difficulty, Integer> result = QuizDataService.calculateEachDifficultyQuestionCount(20, EASY, categoryQuestionCount);
+    class QuizDataServiceTest {
 
-                assertEquals(5, result.get(EASY));
-                assertEquals(15, result.get(MEDIUM));
-                assertNull(result.get(HARD));
+        @Test
+        void calculateEachDifficultyQuestionCount_basicEasy() {
+            CategoryQuestionCountInfoDto categoryQuestionCount = new CategoryQuestionCountInfoDto(5, 17, 13);
+            Map<Difficulty, Integer> result = QuizDataService.calculateEachDifficultyQuestionCount(20, EASY, categoryQuestionCount);
 
-            }
+            assertEquals(5, result.get(EASY));
+            assertEquals(15, result.get(MEDIUM));
+            assertNull(result.get(HARD));
+
         }
     }
 }
